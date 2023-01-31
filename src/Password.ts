@@ -8,12 +8,11 @@ type RulesInput = {
 }[]
 
 export default class Password {
-  value: string
+  value: string | undefined
+  errors: string[] = []
   // #todo:
   // criar array com nome das rules e garantir q o metodo certo da classe seja chamado
   // depois separar por arquivos e ter 2 branches para comparar codigo
-  // this.password por ultimo, passar passard em cada metodo
-  // refatorar nome da classe so para password
   // array vazio e depois recebe push em quais regras nao passou, se for length 0 salva a senha
 
   constructor(password: string, rules: RulesInput) {
@@ -38,49 +37,64 @@ export default class Password {
       }
     })
 
-    this.value = password
+    if (this.errors.length === 0) {
+      this.value = password
+    }
   }
 
   minSize(password: string, value: number | number[]) {
-    if (password.length < value) throw new Error(`Senha deve ter tamanho minimo de ${value} caracteres`)
+    if (password.length < value) this.errors.push('minSize')
   }
   
   minUppercase(password: string, value: number | number[]) {
     if (value == 0) return
     const upperCases = password.match(/[A-Z]/g)
 
-    if (upperCases == null) throw new Error(`Senha deve ter tamanho minimo de ${value} caracteres maiusculos`) 
-    if (upperCases.length < value) throw new Error(`Senha deve ter tamanho minimo de ${value} caracteres maiusculos`)
+    if (upperCases == null) {
+      this.errors.push('minUppercase')
+      return
+    } 
+
+    if (upperCases.length < value) this.errors.push('minUppercase')
   }
 
   minLowercase(password: string, value: number | number[]) {
     if (value == 0) return
     const lowerCases = password.match(/[a-z]/g) 
 
-    if (lowerCases == null) throw new Error(`Senha deve ter tamanho minimo de ${value} caracteres minúsculos`) 
-    if (lowerCases.length < value) throw new Error(`Senha deve ter tamanho minimo de ${value} caracteres minúsculos`)
+    if (lowerCases == null) {
+      this.errors.push('minLowercase') 
+      return
+    }
+    if (lowerCases.length < value) this.errors.push('minLowercase') 
   }
 
   minDigit(password: string, value:number | number[]) {
     if (value == 0) return
     const digits = password.match(/[0-9]/g) 
 
-    if (digits == null) throw new Error(`Senha deve ter tamanho minimo de ${value} Digitos`)  
-    if (digits.length < value) throw new Error(`Senha deve ter tamanho minimo de ${value} digitos`)
+    if (digits == null) {
+      this.errors.push('minDigit') 
+      return
+    }
+    if (digits.length < value) this.errors.push('minDigit')
   }
 
   minSpecialChars(password: string, value:number | number[]) {
     if (value == 0) return
     const specialChars = password.match(/[!@#$%^&*()\-+\/{}\[\]\\]/g) 
-    if (specialChars == null) throw new Error(`Senha deve ter tamanho minimo de ${value} caracteres especiais`)  
-    if (specialChars.length < value) throw new Error(`Senha deve ter tamanho minimo de ${value} caracteres especiais`)
+    if (specialChars == null) {
+      this.errors.push('minSpecialChars')  
+      return
+    }
+    if (specialChars.length < value) this.errors.push('minSpecialChars')  
   }
 
   noRepeted(password: string, value: number | number[]) {
     if (password.length < 2) return
     for (let i = 0; i < password.length - 1; i++) {
       if (password[i] === password[i + 1]) {
-        throw new Error('Senha nao pode ter caracteres repetidos em sequencia')
+        this.errors.push('noRepeted')  
       }
     }
   }

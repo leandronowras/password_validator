@@ -105,3 +105,16 @@ test("Deve dar erro ao ter caracteres repetidos em sequência ( ou seja, 'aab' v
   expect(() => new Password("aab", rules)).toThrow(new Error("Senha nao pode ter caracteres repetidos em sequencia"))
 })
 
+test("Deve testar todas as regras juntas", () => {
+  const rules = [
+    { minSize: 8 },
+    { minUppercase: 3 },
+    { minLowercase: 2 },
+    { minDigit: 2 },
+    { minSpecialChars: 2 }, 
+    { noRepeted: 0 },
+
+  ]
+  const password = new Password("TesteSenhaForte!123&", rules)
+  expect(password).toBeTruthy() 
+})
