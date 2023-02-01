@@ -2,16 +2,16 @@ import Password from "../src/Password"
 
 test("Deve criar a classe Validate Password", () => {
   const rules = [{}]
-  const validatePassword = new Password("123", rules)
-  expect(validatePassword).toBeTruthy()
+  const password = new Password("123", rules)
+  expect(password.value).toBe("123")
 })
 
 test("Deve ter pelo menos x caracteres", () => {
   const rules = [
     { minSize: 8 }
   ]
-  const validatePassword = new Password("12345678", rules)
-  expect(validatePassword).toBeTruthy()
+  const password = new Password("12345678", rules)
+  expect(password.value).toBe("12345678")
 })
 
 test("Deve deve dar erro ao nao ter pelo menos x caracteres", () => {
@@ -19,7 +19,8 @@ test("Deve deve dar erro ao nao ter pelo menos x caracteres", () => {
   const rules = [
     { minSize: MIN_SIZE }
   ]
-  expect(() => new Password('123', rules)).toThrow(new Error(`Senha deve ter tamanho minimo de ${MIN_SIZE} caracteres`));
+  const password = new Password('123', rules) 
+  expect(password.errors).toStrictEqual(["minSize"])
 })
 
 test("Deve ter pelo menos x caracteres maiúsculos", () => {
@@ -27,8 +28,8 @@ test("Deve ter pelo menos x caracteres maiúsculos", () => {
   const rules = [
     { minUppercase: MIN_UPPERCASE }
   ]
-  const validatePassword = new Password("ABCabc123", rules)
-  expect(validatePassword).toBeTruthy() 
+  const password = new Password("ABCabc123", rules)
+  expect(password.value).toBe("ABCabc123") 
 })
 
 test("Deve deve dar erro ao nao ter pelo menos x caracteres maiúsculos", () => {
@@ -36,7 +37,8 @@ test("Deve deve dar erro ao nao ter pelo menos x caracteres maiúsculos", () => 
   const rules = [
     { minUppercase: MIN_UPPERCASE }
   ]
-  expect(() => new Password('123', rules)).toThrow(new Error(`Senha deve ter tamanho minimo de ${MIN_UPPERCASE} caracteres maiusculos`));
+  const password = new Password('123', rules) 
+  expect(password.errors).toStrictEqual(["minUppercase"])
 })
 
 test("Deve ter pelo menos x caracteres minúsculos", () => {
@@ -44,8 +46,8 @@ test("Deve ter pelo menos x caracteres minúsculos", () => {
   const rules = [
     { minLowercase: MIN_LOWERCASE }
   ]
-  const validatePassword = new Password("ABCabc123", rules)
-  expect(validatePassword).toBeTruthy() 
+  const password = new Password("ABCabc123", rules)
+  expect(password.value).toBe("ABCabc123") 
 })
 
 test("Deve dar erro ao nao ter pelo menos x caracteres minúsculos", () => {
@@ -53,7 +55,8 @@ test("Deve dar erro ao nao ter pelo menos x caracteres minúsculos", () => {
   const rules = [
     { minLowercase: MIN_LOWERCASE }
   ]
-  expect(() => new Password('123', rules)).toThrow(new Error(`Senha deve ter tamanho minimo de ${MIN_LOWERCASE} caracteres minúsculos`));
+  const password = new Password('123', rules) 
+  expect(password.errors).toStrictEqual(["minLowercase"])
 })
 
 test("Deve ter pelo menos x dígitos (0-9)", () => {
@@ -61,8 +64,8 @@ test("Deve ter pelo menos x dígitos (0-9)", () => {
   const rules = [
     { minDigit: MIN_DIGITS }
   ]
-  const validatePassword = new Password("ABCabc123", rules)
-  expect(validatePassword).toBeTruthy() 
+  const password = new Password("ABCabc123", rules)
+  expect(password.value).toBe("ABCabc123") 
 })
 
 test("Deve dar erro ao nao ter pelo menos x digitos", () => {
@@ -70,7 +73,8 @@ test("Deve dar erro ao nao ter pelo menos x digitos", () => {
   const rules = [
     { minDigit: MIN_DIGITS }
   ]
-  expect(() => new Password('123', rules)).toThrow(new Error(`Senha deve ter tamanho minimo de ${MIN_DIGITS} digitos`));
+  const password = new Password('123', rules) 
+  expect(password.errors).toStrictEqual(["minDigit"]) 
 })
 
 test("Deve ter pelo menos x caracteres especiais ( Os caracteres especiais são os caracteres da seguinte string: '!@#$%^&*()-+\/{}[]' )", () => {
@@ -78,8 +82,8 @@ test("Deve ter pelo menos x caracteres especiais ( Os caracteres especiais são 
   const rules = [
     { minSpecialChars: MIN_SPECIAL_CHARACTER }
   ]
-  const validatePassword = new Password("!@#$", rules)
-  expect(validatePassword).toBeTruthy()  
+  const password = new Password("!@#$", rules)
+  expect(password.value).toBe("!@#$")  
 })
 
 test("Deve dar erro ao nao ter pelo menos x caracteres especiais ( Os caracteres especiais são os caracteres da seguinte string: '!@#$%^&*()-+\/{}[]' )", () => {
@@ -87,7 +91,8 @@ test("Deve dar erro ao nao ter pelo menos x caracteres especiais ( Os caracteres
   const rules = [
     { minSpecialChars: MIN_SPECIAL_CHARACTER }
   ]
-  expect(() => new Password('!@#', rules)).toThrow(new Error(`Senha deve ter tamanho minimo de ${MIN_SPECIAL_CHARACTER} caracteres especiais`));
+  const password = new Password('123', rules) 
+  expect(password.errors).toStrictEqual(["minSpecialChars"]) 
 })
 
 test("Não deve ter nenhum caractere repetido em sequência ( ou seja, 'aab' viola esta condição, mas 'aba' não)", () => {
@@ -95,17 +100,18 @@ test("Não deve ter nenhum caractere repetido em sequência ( ou seja, 'aab' vio
     { noRepeted: 0 }
   ]
   const password = new Password("123", rules)
-  expect(password).toBeTruthy()
+  expect(password.value).toBe("123")
 })
 
 test("Deve dar erro ao ter caracteres repetidos em sequência ( ou seja, 'aab' viola esta condição, mas 'aba' não)", () => {
   const rules = [
     { noRepeted: 0 }
   ]
-  expect(() => new Password("aab", rules)).toThrow(new Error("Senha nao pode ter caracteres repetidos em sequencia"))
+  const password = new Password('aa123', rules) 
+  expect(password.errors).toStrictEqual(["noRepeted"]) 
 })
 
-test("Deve testar todas as regras juntas", () => {
+test("Deve testar uma senha valida com todas as regras juntas", () => {
   const rules = [
     { minSize: 8 },
     { minUppercase: 3 },
@@ -116,5 +122,19 @@ test("Deve testar todas as regras juntas", () => {
 
   ]
   const password = new Password("TesteSenhaForte!123&", rules)
-  expect(password).toBeTruthy() 
+  expect(password.value).toBe("TesteSenhaForte!123&") 
+})
+
+test("Deve testar uma senha invalida com todas as regras juntas", () => {
+  const rules = [
+    { minSize: 8 },
+    { minUppercase: 3 },
+    { minLowercase: 3 },
+    { minDigit: 2 },
+    { minSpecialChars: 2 }, 
+    { noRepeted: 0 },
+
+  ]
+  const password = new Password("aa", rules)
+  expect(password.errors).toStrictEqual(["minSize", "minUppercase", "minLowercase", "minDigit", "minSpecialChars", "noRepeted"]) 
 })

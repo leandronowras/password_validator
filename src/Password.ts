@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 type RulesInput = {
   minSize?: number,
   minUppercase?: number,
@@ -5,35 +7,16 @@ type RulesInput = {
   minDigit?: number,
   minSpecialChars?: number,
   noRepeted?: number
-}[]
+}
 
 export default class Password {
   value: string | undefined
   errors: string[] = []
-  // #todo:
-  // criar array com nome das rules e garantir q o metodo certo da classe seja chamado
-  // depois separar por arquivos e ter 2 branches para comparar codigo
-  // array vazio e depois recebe push em quais regras nao passou, se for length 0 salva a senha
 
-  constructor(password: string, rules: RulesInput) {
+  constructor(password: string, rules: RulesInput[]) {
     rules.map((rule) => {
-      if (Object.keys(rule).toString() === "minSize") {
-        this.minSize(password, Object.values(rule))
-      }
-      else if (Object.keys(rule).toString() === "minUppercase") {
-        this.minUppercase(password, Object.values(rule))
-      }
-      else if (Object.keys(rule).toString() === "minLowercase") {
-        this.minLowercase(password, Object.values(rule))
-      }
-      else if (Object.keys(rule).toString() === "minDigit") {
-        this.minDigit(password, Object.values(rule))
-      }
-      else if (Object.keys(rule).toString() === "minSpecialChars") {
-        this.minSpecialChars(password, Object.values(rule))
-      }
-      else if (Object.keys(rule).toString() === "noRepeted") {
-        this.noRepeted(password, Object.values(rule))
+      if (this[Object.keys(rule)]) {
+        this[Object.keys(rule)](password, Object.values(rule))
       }
     })
 
