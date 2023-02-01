@@ -13,20 +13,35 @@ Todas as regras são opcionais e o retorno da API será em formato JSON informan
 
 ## Table of Contents
 - [Getting Started](#getting_started)
+  - [Locally](#locally)
+  - [Docker](#docker)
 - [Architecture](#architecture)
 - [Tests](#tests)
 
 <a name="getting_started"></a>
 ## Getting Started
-Install the dependencies
+<a name="locally"></a>
+### Locally
+Instalar as dependencias
 ```
 npm i
 ```
-Start the server
+Iniciar o servidor
 ```
 npm run server
 ```
-Isso fará com que a aplicação seja iniciada em sua máquina na porta 8080 e com a rota /verify para validar o input
+<a name="docker"></a>
+### Docker
+Criar a imagem docker
+```
+docker build -t password_validator .
+```
+Iniciar o container
+```
+docker run --name password_validator -dp 8080:8080 password_validator
+```
+
+Em ambos os casos, a aplicação será iniciada na porta 8080 e com a rota /verify para validar o input
 Para acessar, é necessário fazer uma requisição POST no formato json passando a senha para ser validada e as regras desejadas no modelo abaixo
 ```
 curl -X POST -H 'Content-Type: application/json' "http://localhost:8080/verify" -d '{
